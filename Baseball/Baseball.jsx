@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 
 import Tr from './Try';
 
@@ -24,10 +24,12 @@ class NumberBaseball extends Component {
         const { value, tries, answer } = this.state;
         e.preventDefault();
         if (value === answer.join('')) {
-            this.setState({
-                result: '홈런!!!',
-                tries: [...tries, { try: value, result: '홈런!!!'}],
-            })
+            this.setState((prevState) => {
+                return {
+                    result: '홈런!!!',
+                    tries: [...prevState.tries, { try: value, result: '홈런!!!'}],
+                }
+            });
             alert("게임을 다시 시작합니다!");
             this.setState({
                 value: '',
@@ -40,10 +42,13 @@ class NumberBaseball extends Component {
             let ball = 0;
             if (tries.length >= 9) {
                 alert("게임을 다시 시작합니다!");
-                this.setState({
-                    value: '',
-                    answer: getNumbers(),
-                    tries: [],
+                this.setState((prevState) => {
+                    return {
+                        result: `10번 넘게 틀려서 실패! 답은 ${prevState.answer.join(',')}였습니다.`,
+                        value: '',
+                        answer: getNumbers(),
+                        tries: [],
+                    }
                 });
             } else {
                 for (let i = 0; i < 4; i += 1) {
@@ -52,13 +57,16 @@ class NumberBaseball extends Component {
                     } else if (answer.includes(answerArray[i])) {
                         ball += 1;
                     }
-                    this.setState({
-                        tries: [...tries, { try: value, result: `${strike} 스트라이크, ${ball} 볼입니다.`}],
-                        value: '',
-                    })
                 }
+                this.setState((prevState) => {
+                    return {
+                        tries: [...prevState.tries, { try: value, result: `${strike} 스트라이크, ${ball} 볼입니다.`}],
+                        value: '',
+                    }
+                })
             }
         }
+        inputRef.current.focus();
     };
 
     change = (e) => {
@@ -72,13 +80,15 @@ class NumberBaseball extends Component {
     // { dec: 5, word: 'Five' },
     // { dec: 6, word: 'Six' }];
 
+    inputRef = createRef();
+
     render() {
         const { result, value, tries } = this.state;
         return (
             <>
                 <h1>{result}</h1>
                 <form onSubmit={this.submit}>
-                    <input maxLength={4} value={value} onChange={this.change}/>
+                    <input ref={this.inputRef} maxLength={4} value={value} onChange={this.change}/>
                 </form>
                 <div>시도 : {tries.length}</div>
                 <ul>

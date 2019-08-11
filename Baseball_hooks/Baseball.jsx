@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Tr from './Try';
 
@@ -12,39 +12,32 @@ function getNumbers() { // Todo 숫자 4개 겹치지 않게 뽑기
     return array
 };
 
-class NumberBaseball extends Component {
-    state = {
-        result: '',
-        value: '',
-        answer: getNumbers(),
-        tries: [],
-    };
+const NumberBaseball = () => {
+    const [result, setResult] = useState('');
+    const [value, setValue] = useState('');
+    const [answer, setAnswer] = useState(getNumbers());
+    const [tries, setTries] = useState([]);
 
-    submit = (e) => {
-        const { value, tries, answer } = this.state;
+    const inputRef = useRef(null);
+    const submit = (e) => {
         e.preventDefault();
         if (value === answer.join('')) {
-            this.setState({
-                result: '홈런!!!',
-                tries: [...tries, { try: value, result: '홈런!!!'}],
-            })
+            setResult('홈런!!!');
+            setTries((prevTries) => [...prevTries, { try: value, result: '홈런!!!'}]);
             alert("게임을 다시 시작합니다!");
-            this.setState({
-                value: '',
-                answer: getNumbers(),
-                tries: [],
-            });
+            setValue('');
+            setAnswer(getNumbers());
+            setTries([]);
         } else {
             const answerArray = value.split('').map((v) => parseInt(v));
             let strike = 0;
             let ball = 0;
             if (tries.length >= 9) {
+                setResult(`10번 넘게 틀려서 실패! 답은 ${answer.join(',')}였습니다.`);
                 alert("게임을 다시 시작합니다!");
-                this.setState({
-                    value: '',
-                    answer: getNumbers(),
-                    tries: [],
-                });
+                setValue('');
+                setAnswer(getNumbers());
+                setTries([]);
             } else {
                 for (let i = 0; i < 4; i += 1) {
                     if (answerArray[i] === answer[i]) {
@@ -52,77 +45,36 @@ class NumberBaseball extends Component {
                     } else if (answer.includes(answerArray[i])) {
                         ball += 1;
                     }
-                    this.setState({
-                        tries: [...tries, { try: value, result: `${strike} 스트라이크, ${ball} 볼입니다.`}],
-                        value: '',
-                    })
                 }
+                setTries((prevTries) => [...prevTries, { try: value, result: `${strike} 스트라이크, ${ball} 볼입니다.`}])
+                setValue('');
             }
         }
+        inputRef.current.focus();
     };
 
-    change = (e) => {
-        this.setState({ value: e.target.value });
+    const change = (e) => {
+        setValue(e.target.value);
     };
-    
-    // numbers = [{ dec: 1, word: 'One' },
-    // { dec: 2, word: 'Two' },
-    // { dec: 3, word: 'Three' },
-    // { dec: 4, word: 'Four' },
-    // { dec: 5, word: 'Five' },
-    // { dec: 6, word: 'Six' }];
 
-    render() {
-        const { result, value, tries } = this.state;
-        return (
-            <>
-                <h1>{result}</h1>
-                <form onSubmit={this.submit}>
-                    <input maxLength={4} value={value} onChange={this.change}/>
-                </form>
-                <div>시도 : {tries.length}</div>
-                <ul>
-                    {tries.map((v, i) => {
-                        return (
-                            <Tr key={`${i + 1}차 시도`} val={v}/>
-                        );
-                    })}
-                    {/* {[1,2,3,4,5,6].map((v) => {
-                        return (
-                            <li>{v}</li>
-                        );
-                    })}  
-                    {[[1, '1'], [2, '10'],[3, '11'], [4, '100'], [5, '101'], [6, '110']].map((v) => {
-                        return (
-                            <li><b>{v[0]}</b> - {v[1]}</li>
-                        );
-                    })} */}
-                    {/* {[{ dec: 1, word: 'One' },
-                    { dec: 2, word: 'Two' },
-                    { dec: 3, word: 'Three' },
-                    { dec: 4, word: 'Four' },
-                    { dec: 5, word: 'Five' },
-                    { dec: 6, word: 'Six' }
-                ].map((v) => {
-                        return (
-                            <li key={v.dec}><b>{v.dec}</b> - {v.word}</li>
-                        );
-                    })} */}
-                     {/* {this.numbers.map((v, i) => {
-                        return (
-                            <li key={v.dec}><b>{v.dec}</b> - {v.word} / index : {i}</li>
-                        );
-                    })} */}
-                    
-                    
-                </ul>
-            </>
-        );
-    }
+    return (
+        <>
+            <h1>{result}</h1>
+            <form onSubmit={submit}>
+                <input ref={inputRef} maxLength={4} value={value} onChange={change}/>
+            </form>
+            <div>시도 : {tries.length}</div>
+            <ul>
+                {tries.map((v, i) => {
+                    return (
+                        <Tr key={`${i + 1}차 시도`} val={v}/>
+                    );
+                })}
+            </ul>
+        </>
+    );
 }
 
-export const hello = 'world'; // import { hello }
-export const bye = 'good'; //import { hello, bye }
 export default NumberBaseball; // import NumberBaseball
 
 // exports.hello = 'hello';

@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
+import React, { memo } from 'react';
 
-class Try extends Component {
-    render() {
-        const { info } = this.props;
-        return (
-            <li>
-                <div>{this.props.val.try}</div>
-                <div>{this.props.val.result}</div>
-            </li>
-        )
-    }
-}
+const Try = memo(({ val }) => {
+    return (
+        <li>
+            <div>{val.try}</div>
+            <div>{val.result}</div>
+        </li>
+    );
+});
 
 export default Try;

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { hot } from 'react-hot-loader/root';
 
-import BaseBall from './Baseball';
+import BB from './Baseball';
 
-const Hot = hot(BaseBall);
+const Hot = hot(BB);
 ReactDom.render(<Hot />, document.querySelector("#root"));
