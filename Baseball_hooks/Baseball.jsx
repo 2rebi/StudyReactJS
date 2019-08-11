@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 import Tr from './Try';
 
-function getNumbers() { // Todo 숫자 4개 겹치지 않게 뽑기
+function getNumbers() { // Todo 훅스 펑션 자체가 통째로 호출함으로써 해당 함수도 매번 호출하기때문에 그에 대한 막는 로직이 필요.
     const candidate = [1,2,3,4,5,6,7,8,9];
     const array = [];
     for (let i = 0; i < 4; i += 1) {
