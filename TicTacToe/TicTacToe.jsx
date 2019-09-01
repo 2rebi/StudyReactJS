@@ -97,7 +97,8 @@ const TicTacToe = () => {
                 });
             });
             if (all) {
-                dispatch({ type: RESET_GAME });
+                dispatch({ type: SET_WINNER, winner: "무승부" });
+                dispatch({ type: RESET_GAME  });
             } else {
                 dispatch({ type: CHANGE_TURN });
             }
@@ -106,7 +107,9 @@ const TicTacToe = () => {
     return (
         <>
             <Table onClick={onClickTable} tableData={tableData} dispatch={dispatch}/>
-            {winner && <div>{winner}님의 승리</div>}
+            {winner && (
+                winner == "무승부" ? winner : <div>{winner}님의 승리</div>
+            )}
         </>
     );
 };
